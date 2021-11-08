@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import productActions from '../../redux/actions/product.action';
 import userActions from '../../redux/actions/user.action';
 import './DetailPage.css';
+import cartActions from '../../redux/actions/cart.action';
 
 const DetailPage = () => {
   const [addingProductToCart, setAddingProductToCart] = useState(false);
@@ -22,12 +23,12 @@ const DetailPage = () => {
 
   const addToCart = (product) => {
     // console.log(product);
-    setAddingProductToCart(product?._id);
+    setAddingProductToCart(product._id);
   };
 
   useEffect(() => {
     if (addingProductToCart) {
-      dispatch(userActions.addToCart({addingProductToCart}));
+      dispatch(cartActions.addToCart({addingProductToCart}));
     }
   }, [addingProductToCart]);
 

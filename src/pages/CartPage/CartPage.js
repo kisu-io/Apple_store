@@ -4,6 +4,8 @@ import {ClipLoader} from 'react-spinners';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import userActions from '../../redux/actions/user.action';
+import cartActions from '../../redux/actions/cart.action';
+
 import './CartPage.css';
 
 const CartPage = () => {
@@ -14,7 +16,11 @@ const CartPage = () => {
 
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.users.loading);
-  const products = useSelector((state) => state.users.cartProduct);
+  const products = useSelector((state) => state.carts.cart);
+
+  const removeProduct = (productId) => {
+    dispatch(cartActions.deleteCart(productId));
+  };
 
   const handleOrder = () => {
     dispatch(userActions.postOrder());
@@ -22,7 +28,7 @@ const CartPage = () => {
   };
 
   useEffect(() => {
-    dispatch(userActions.getCartProduct());
+    dispatch(cartActions.getCartProduct());
   }, []);
 
   return (
@@ -80,6 +86,7 @@ const CartPage = () => {
                             right: '10px',
                           }}
                           size="md"
+                          onClick={() => removeProduct(product.id)}
                         ></Button>
                       </Card.Body>
                     </Card>

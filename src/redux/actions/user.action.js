@@ -2,6 +2,8 @@ import api from '../../apiService';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as types from '../constants/user.constant';
+import cartActions from './cart.action';
+import productActions from './product.action';
 
 const userActions = {};
 
@@ -16,39 +18,6 @@ userActions.getCurrentUser = () => async (dispatch) => {
   }
 };
 
-userActions.getCartProduct = () => {
-  return async (dispatch) => {
-    try {
-      dispatch({type: types.GET_TO_CART_REQUEST});
-      const res = await api.get(`/users/me`);
-      dispatch({type: types.GET_TO_CART_SUCCESS, payload: res.data});
-    } catch (err) {
-      // console.log(err);
-      toast.error(err.message);
-      dispatch({type: types.GET_TO_CART_FAIL});
-    }
-  };
-};
-
-userActions.addToCart = ({addingProductToCart}) => {
-  return async (dispatch) => {
-    dispatch({type: types.ADD_TO_CART_REQUEST});
-    try {
-      let url = `/users/cart`;
-      let res = await api.post(url, {
-        productId: addingProductToCart,
-        quantity: 1,
-      });
-      dispatch({type: types.ADD_TO_CART_SUCCESS});
-      toast.success('Item has successfully been added to your cart');
-    } catch (err) {
-      // console.log(err);
-      toast.error(err.message);
-      dispatch({type: types.ADD_TO_CART_FAIL, payload: err.message});
-    }
-  };
-};
-
 userActions.postReview = ({productId, review, rating}) => {
   return async (dispatch) => {
     dispatch({type: types.POST_REVIEW_REQUEST});
@@ -59,6 +28,7 @@ userActions.postReview = ({productId, review, rating}) => {
         rating: rating,
       });
       dispatch({type: types.POST_REVIEW_SUCCESS});
+      dispatch(productActions.getProductDetail({productId}));
       toast.success('Your review has been received');
     } catch (err) {
       // console.log(err);
@@ -74,6 +44,7 @@ userActions.postOrder = () => {
     try {
       const res = await api.post(`/orders`);
       dispatch({type: types.POST_REVIEW_SUCCESS});
+      dispatch(cartActions.getCart());
       toast.success("We've received your order. Thanks for shopping with us!");
     } catch (err) {
       // console.log(err);
